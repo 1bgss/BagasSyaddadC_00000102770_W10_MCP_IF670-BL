@@ -26,6 +26,18 @@ import * as FileSystem from "expo-file-system/legacy";
 
 import { supabase } from "../utils/supabase";
 import * as Notifications from "expo-notifications";
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
+
+import {
+  incrementSuccess,
+  incrementFailed,
+} from "../store/counter.slice";
+
+import { RootState }
+  from "../store/store";
 
 type Coordinates = {
   latitude: number;
@@ -78,6 +90,19 @@ export default function Index() {
   });
 };
 
+const dispatch = useDispatch();
+
+const successCount =
+  useSelector(
+    (state: RootState) =>
+      state.counter.successCount
+  );
+
+const failedCount =
+  useSelector(
+    (state: RootState) =>
+      state.counter.failedCount
+  );
 
   // =========================
   // GET LOCATION
@@ -170,6 +195,10 @@ export default function Index() {
           });
 
       if (uploadError) {
+  dispatch(
+    incrementFailed()
+  );
+
   console.log(
     "UPLOAD ERROR:",
     uploadError
@@ -215,6 +244,10 @@ ${uploadError.message}`
           ]);
 
       if (dbError) {
+  dispatch(
+  incrementFailed()
+  );
+
   console.log(
     "DATABASE ERROR:",
     dbError
@@ -235,6 +268,10 @@ ${dbError.message}`
   return;
 }
 
+dispatch(
+  incrementSuccess()
+);
+
       console.log(
   "SUCCESS:",
   publicUrl
@@ -242,8 +279,10 @@ ${dbError.message}`
 
 await sendNotification(
   "✅ Data Berhasil Disimpan",
-  `Latitude: ${location.latitude}
+  `Success : ${successCount + 1}
+Failed  : ${failedCount}
 
+Latitude : ${location.latitude}
 Longitude: ${location.longitude}
 
 Foto berhasil diupload ke Supabase dan data lokasi berhasil disimpan.`
@@ -253,6 +292,10 @@ alert(
   "Photo + location saved successfully!"
 );
     } catch (err: any) {
+  dispatch(
+  incrementFailed()
+  );
+  
   console.log(
     "GENERAL ERROR:",
     err
@@ -364,6 +407,14 @@ alert(
                 <Text>
                   Longitude:{" "}
                   {location.longitude}
+                </Text>
+
+                <Text>
+                Success: {successCount}
+                </Text>
+
+                <Text>
+                Failed: {failedCount}
                 </Text>
 
                 <Button
