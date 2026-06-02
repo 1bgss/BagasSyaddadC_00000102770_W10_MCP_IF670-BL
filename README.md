@@ -1,3 +1,11 @@
+W12 add notif result :
+<img width="1080" height="543" alt="4ecd846b-abd7-47a2-afd1-1a6c4708e239" src="https://github.com/user-attachments/assets/250e7cc2-064c-4b83-9e53-e242fbb25339" />
+
+
+
+
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
