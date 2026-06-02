@@ -3,6 +3,9 @@ w11 : pengerjaan week 11 sudah diterapkan di pesan commit "Integrasi database + 
 W12 add notif result :
 <img width="1080" height="543" alt="4ecd846b-abd7-47a2-afd1-1a6c4708e239" src="https://github.com/user-attachments/assets/250e7cc2-064c-4b83-9e53-e242fbb25339" />
 
+W13 add redux + success and failed notif result :
+<img width="1080" height="632" alt="cdb00547-25a4-4148-afbc-a3af6b870b78" src="https://github.com/user-attachments/assets/46e20a44-8d53-43a6-a7fd-e63c35829da8" />
+
 
 
 
