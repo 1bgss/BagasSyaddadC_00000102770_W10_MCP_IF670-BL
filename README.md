@@ -1,3 +1,5 @@
+w11 : pengerjaan week 11 sudah diterapkan di pesan commit "Integrasi database + pengerjaan tugas", silahkan cek di history commit.
+
 W12 add notif result :
 <img width="1080" height="543" alt="4ecd846b-abd7-47a2-afd1-1a6c4708e239" src="https://github.com/user-attachments/assets/250e7cc2-064c-4b83-9e53-e242fbb25339" />
 
