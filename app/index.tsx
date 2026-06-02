@@ -2,7 +2,7 @@ import "react-native-url-polyfill/auto";
 import { decode } from "base64-arraybuffer";
 
 import * as Location from "expo-location";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Button,
@@ -25,6 +25,7 @@ import { Camera } from "expo-camera";
 import * as FileSystem from "expo-file-system/legacy";
 
 import { supabase } from "../utils/supabase";
+import * as Notifications from "expo-notifications";
 
 type Coordinates = {
   latitude: number;
@@ -33,12 +34,50 @@ type Coordinates = {
 
 const { height } = Dimensions.get("window");
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 export default function Index() {
   const [location, setLocation] =
     useState<Coordinates | null>(null);
 
   const [image, setImage] =
     useState<string | null>(null);
+
+  const registerForNotifications =
+  async () => {
+    const { status } =
+      await Notifications.requestPermissionsAsync();
+
+    if (status !== "granted") {
+      alert(
+        "Notification permission denied!"
+      );
+    }
+  };
+
+    useEffect(() => {
+    registerForNotifications();
+  }, []);
+
+  const sendNotification = async (
+  title: string,
+  body: string
+) => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title,
+      body,
+    },
+    trigger: null,
+  });
+};
+
 
   // =========================
   // GET LOCATION
@@ -131,14 +170,23 @@ export default function Index() {
           });
 
       if (uploadError) {
-        console.log(
-          "UPLOAD ERROR:",
-          uploadError
-        );
+  console.log(
+    "UPLOAD ERROR:",
+    uploadError
+  );
 
-        alert("Upload failed!");
-        return;
-      }
+  await sendNotification(
+    "❌ Upload Gagal",
+    `Latitude: ${location.latitude}
+Longitude: ${location.longitude}
+
+${uploadError.message}`
+  );
+
+  alert("Upload failed!");
+
+  return;
+}
 
       // =========================
       // GET PUBLIC URL
@@ -167,35 +215,58 @@ export default function Index() {
           ]);
 
       if (dbError) {
-        console.log(
-          "DATABASE ERROR:",
-          dbError
-        );
+  console.log(
+    "DATABASE ERROR:",
+    dbError
+  );
 
-        alert(
-          "Database save failed!"
-        );
+  await sendNotification(
+    "❌ Database Gagal",
+    `Latitude: ${location.latitude}
+Longitude: ${location.longitude}
 
-        return;
-      }
+${dbError.message}`
+  );
+
+  alert(
+    "Database save failed!"
+  );
+
+  return;
+}
 
       console.log(
-        "SUCCESS:",
-        publicUrl
-      );
+  "SUCCESS:",
+  publicUrl
+);
 
-      alert(
-        "Photo + location saved successfully!"
-      );
-    } catch (err) {
-      console.log(
-        "GENERAL ERROR:",
-        err
-      );
+await sendNotification(
+  "✅ Data Berhasil Disimpan",
+  `Latitude: ${location.latitude}
 
-      alert("Something went wrong!");
-    }
-  };
+Longitude: ${location.longitude}
+
+Foto berhasil diupload ke Supabase dan data lokasi berhasil disimpan.`
+);
+
+alert(
+  "Photo + location saved successfully!"
+);
+    } catch (err: any) {
+  console.log(
+    "GENERAL ERROR:",
+    err
+  );
+
+  await sendNotification(
+    "❌ Terjadi Kesalahan",
+    err?.message ??
+      "Unknown error"
+  );
+
+  alert("Something went wrong!");
+}
+};
 
   // =========================
   // MAP PRESS
